@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ARS_DAL
 {
-    public class ParticipantDAL
+    public class ParticipantDAL : IParticipantDAL
     {
         private List<Participant> _lstparticipants = new List<Participant>();
         public ParticipantDAL()
@@ -48,7 +48,17 @@ namespace ARS_DAL
             return participant;
         }
 
-        
-
+        public Participant Updateparticipant(int id,Participant participant)
+        {
+            for (int i = 0; i < _lstparticipants.Count; i++)
+            {
+                if (_lstparticipants[i].ParticipantId == id) 
+                {
+                    _lstparticipants[i] = participant;
+                    return _lstparticipants[i];
+                }
+            }
+            throw new Exception("Invalid operation Attemped");
+        }
     }
 }

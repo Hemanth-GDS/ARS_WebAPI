@@ -1,3 +1,4 @@
+using ARS_DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ namespace ARS_WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ARS_WebAPI", Version = "v1" });
             });
+            services.AddSingleton<IParticipantDAL, ParticipantDAL>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
