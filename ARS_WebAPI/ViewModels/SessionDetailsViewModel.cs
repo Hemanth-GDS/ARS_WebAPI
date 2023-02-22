@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace ARS_Models
+namespace ARS_WebAPI.ViewModels
 {
-    public class SessionDetails
+    public class SessionDetailsViewModel
     {
         public int Id { get; set; }
 
@@ -14,11 +13,9 @@ namespace ARS_Models
 
         public DateTime Date { get; set; }
 
-        //public Participant Trainer { get; set; }
-        public int TrainerId { get; set; }
+        public ParticipantViewModel Trainer { get; set; }
 
-        //public SessionType SessionType { get; set; }
-        public int SessionTypeId { get; set; }
+        public SessionTypeViewModel SessionType { get; set; }
 
         public string Description { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using ARS_DAL;
+using ARS_DAL.DALInterfaces;
 using ARS_Models;
 using ARS_WebAPI.ModelMappers;
 using ARS_WebAPI.ViewModels;

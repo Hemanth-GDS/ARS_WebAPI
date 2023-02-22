@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ARS_DAL
+namespace ARS_DAL.DALInterfaces
 {
      public interface IParticipantDAL
     {

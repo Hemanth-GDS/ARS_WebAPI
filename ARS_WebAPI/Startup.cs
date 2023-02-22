@@ -1,4 +1,6 @@
 using ARS_DAL;
+using ARS_DAL.DALImplementations;
+using ARS_DAL.DALInterfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +34,7 @@ namespace ARS_WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ARS_WebAPI", Version = "v1" });
             });
-            services.AddSingleton<IParticipantDAL, ParticipantDAL>();
+            services.AddModelMappings();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +55,17 @@ namespace ARS_WebAPI
             {
                 endpoints.MapControllers();
             });
+        }
+
+
+    }
+
+    public static class ModelMapping
+    {
+        public static void AddModelMappings(this IServiceCollection services)
+        {
+            services.AddSingleton<IParticipantDAL, ParticipantDAL>();
+            services.AddSingleton<ISessionTypeDAL, SessionTypeDAL>();
         }
     }
 }
