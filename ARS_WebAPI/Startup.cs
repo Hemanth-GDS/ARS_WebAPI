@@ -66,6 +66,8 @@ namespace ARS_WebAPI
         {
             services.AddSingleton<IParticipantDAL, ParticipantDAL>();
             services.AddSingleton<ISessionTypeDAL, SessionTypeDAL>();
+            services.AddSingleton<ISessionDetailsDAL, SessionDetailsDAL>();
+            services.AddSingleton<ISessionParticipantsMappingDAL, SessionParticipantsMappingDAL>();
         }
     }
 }

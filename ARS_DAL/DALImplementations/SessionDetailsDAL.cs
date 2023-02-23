@@ -10,7 +10,7 @@ namespace ARS_DAL.DALImplementations
 {
     public class SessionDetailsDAL : ISessionDetailsDAL
     {
-        private List<SessionDetails> _lstSessionDetails;
+        private List<SessionDetails> _lstSessionDetails = new List<SessionDetails>();
 
         public SessionDetailsDAL()
         {
