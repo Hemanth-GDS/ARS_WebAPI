@@ -17,7 +17,7 @@ namespace ARS_DAL.DALInterfaces
 
         List<SessionParticipantsMapping> getReport(List<SessionDetails> sessionDetails);
 
-        SessionParticipantsMapping AddSingleAttendence(SessionParticipantsMapping sessionParticipantsMapping);
+        SessionParticipantsMapping AddSingleAttendence(SessionParticipantsMapping sessionParticipantsMapping, bool fromAPI = true);
 
         List<SessionParticipantsMapping> AddMultipleAttendence(List<SessionParticipantsMapping> lstSessionParticipantsMapping);
 

@@ -24,12 +24,12 @@ namespace ARS_DAL.DALImplementations
         {
             foreach (var item in lstSessionParticipantsMapping)
             {
-                AddSingleAttendence(item);
+                AddSingleAttendence(item,false);
             }
             return _lstSessionParticipantsMappings;
         }
 
-        public SessionParticipantsMapping AddSingleAttendence(SessionParticipantsMapping sessionParticipantsMapping)
+        public SessionParticipantsMapping AddSingleAttendence(SessionParticipantsMapping sessionParticipantsMapping, bool fromAPI)
         {
             _lstSessionParticipantsMappings.Add(sessionParticipantsMapping);
             return sessionParticipantsMapping;

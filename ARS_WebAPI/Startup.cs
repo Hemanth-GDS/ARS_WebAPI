@@ -4,6 +4,7 @@ using ARS_DAL.DALInterfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +29,7 @@ namespace ARS_WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContextPool<AppDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ARS_DBConnection")));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -64,10 +66,10 @@ namespace ARS_WebAPI
     {
         public static void AddModelMappings(this IServiceCollection services)
         {
-            services.AddSingleton<IParticipantDAL, ParticipantDAL>();
-            services.AddSingleton<ISessionTypeDAL, SessionTypeDAL>();
-            services.AddSingleton<ISessionDetailsDAL, SessionDetailsDAL>();
-            services.AddSingleton<ISessionParticipantsMappingDAL, SessionParticipantsMappingDAL>();
+            services.AddScoped<IParticipantDAL, SQLParticipantDAL>();
+            services.AddScoped<ISessionTypeDAL, SQLSessionTypeDAL>();
+            services.AddScoped<ISessionDetailsDAL, SQLSessionDetailsDAL>();
+            services.AddScoped<ISessionParticipantsMappingDAL, SQLSessionParticipantsMappingDAL>();
         }
     }
 }
