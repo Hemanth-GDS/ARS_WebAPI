@@ -61,5 +61,10 @@ namespace ARS_DAL
             }
             throw new Exception("Invalid operation Attemped");
         }
+
+        public Participant GetParticipantByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

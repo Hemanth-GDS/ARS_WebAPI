@@ -51,6 +51,11 @@ namespace ARS_DAL.DALImplementations
             return context.Participant.Where(x => x.ParticipantId == id).FirstOrDefault();
         }
 
+        public Participant GetParticipantByEmail(string email)
+        {
+            return context.Participant.Where(x => x.Email == email).FirstOrDefault();
+        }
+
         public List<Participant> GetParticipants()
         {
             return context.Participant.ToList();

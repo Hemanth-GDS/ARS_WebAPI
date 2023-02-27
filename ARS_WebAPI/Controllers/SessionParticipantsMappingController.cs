@@ -1,9 +1,12 @@
 ﻿using ARS_DAL.DALInterfaces;
 using ARS_WebAPI.ModelMappers;
 using ARS_WebAPI.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +35,7 @@ namespace ARS_WebAPI.Controllers
         [HttpGet]
         public IEnumerable<SessionParticipantsMappingViewModel> Get()
         {
-            return _ISessionParticipantsMappingDAL.get().ConvertToListViewModel(_ISessionTypeDAL,_IParticipantDAL,_ISessionDetailsDAL);
+            return _ISessionParticipantsMappingDAL.get().ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL);
         }
 
         // GET api/<SessionParticipantsMappingController>/5
@@ -64,17 +67,95 @@ namespace ARS_WebAPI.Controllers
             return _ISessionParticipantsMappingDAL.AddMultipleAttendence(value.ConvertToListModel()).ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL);
         }
 
-        // PUT api/<SessionParticipantsMappingController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+        [Route("[action]")]
+        [HttpPost]
+        public List<SessionParticipantsMappingViewModel> AddAttendenceFromFile(UploadedSession uploadedSession)
+        {
+            #region add new participants if not added else fetch particpants
+            List<ParticipantViewModel> tempPVM = ReadFileData(uploadedSession.UploadedFile);
+            List<ParticipantViewModel> resPVM = new List<ParticipantViewModel>();
 
-        // DELETE api/<SessionParticipantsMappingController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
+            foreach (var item in tempPVM)
+            {
+                var part = _IParticipantDAL.GetParticipantByEmail(item.Email);
 
-        //}
+                if (part == null)
+                {
+                    resPVM.Add(
+                        _IParticipantDAL.Addparticipant((new ParticipantViewModel()
+                        {
+                            Email = item.Email,
+                            Name = item.Name
+                        }).ConvertToModel()).ConvertToViewModel()
+                    );
+                }
+                else {
+                    resPVM.Add(part.ConvertToViewModel());
+                }
+            }
+            #endregion
+
+
+            #region add new SessionDetails if not added else fetch SessionDetails
+            List<SessionDetailsViewModel> lstSessionDtls = _ISessionDetailsDAL.Get().ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL);
+
+            var tempSession = lstSessionDtls
+                                .Where(x => x.Date == uploadedSession.SessionDate && 
+                                x.SessionType.Id == uploadedSession.SessionTypeId && 
+                                x.Trainer.ParticipantId == uploadedSession.TrainerId).FirstOrDefault();
+
+            if (tempSession == null) {
+                //then create a new Session Details
+                var s1 = _ISessionTypeDAL.GetById(uploadedSession.SessionTypeId).ConvertToViewModel();
+                var p1 = _IParticipantDAL.GetParticipant(uploadedSession.TrainerId).ConvertToViewModel();
+                tempSession = (_ISessionDetailsDAL.Add((new SessionDetailsViewModel()
+                {
+                    Date = uploadedSession.SessionDate,
+                    SessionType = s1,
+                    Trainer = p1,
+                    SessionName = s1.Name + " BY - " + p1.Name +" " + uploadedSession.SessionDate.Date.ToShortDateString()
+                }).ConvertToModel())).ConvertToViewModel(_ISessionTypeDAL, _IParticipantDAL);
+            }
+
+            #endregion
+
+            List<SessionParticipantsMappingViewModel> resultPost = new List<SessionParticipantsMappingViewModel>();
+            foreach (var item in resPVM)
+            {
+                resultPost.Add(new SessionParticipantsMappingViewModel()
+                {
+                    Participant = new ParticipantViewModel() { ParticipantId = item.ParticipantId },
+                    SessionDetails = new SessionDetailsViewModel() { Id = tempSession.Id }
+                });
+            }
+
+            return _ISessionParticipantsMappingDAL.AddMultipleAttendence(resultPost.ConvertToListModel()).ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL);
+        }
+
+        private List<ParticipantViewModel> ReadFileData(IFormFile UploadedFile)
+        {
+            var Participants = new List<ParticipantViewModel>();
+            using (var stream = new MemoryStream())
+            {
+                UploadedFile.CopyTo(stream);
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial; using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet sheet = package.Workbook.Worksheets[0];
+                    var currentSheet = package.Workbook.Worksheets;
+                    var workSheet = currentSheet.First(); int rowCount = workSheet.Dimension.Rows;
+                    for (int row = 1; row <= rowCount; row++)
+                    {
+                        Participants.Add(new ParticipantViewModel()
+                        {
+                            Name = workSheet.Cells[row, 5].Value.ToString().Trim(),
+                            Email = workSheet.Cells[row, 4].Value.ToString().Trim()
+                        });
+                    }
+                }
+            }
+            return Participants;
+        }
+
+
     }
 }

@@ -19,6 +19,6 @@ namespace ARS_DAL.DALInterfaces
 
         Participant Updateparticipant(int id, Participant participant);
 
-
+        Participant GetParticipantByEmail(string email);
     }
 }
