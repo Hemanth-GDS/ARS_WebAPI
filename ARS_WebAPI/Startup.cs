@@ -70,6 +70,7 @@ namespace ARS_WebAPI
             services.AddScoped<ISessionTypeDAL, SQLSessionTypeDAL>();
             services.AddScoped<ISessionDetailsDAL, SQLSessionDetailsDAL>();
             services.AddScoped<ISessionParticipantsMappingDAL, SQLSessionParticipantsMappingDAL>();
+            services.AddScoped<IParticipantIntrestDAL, ParticipantIntrestsDAL>();
         }
     }
 }

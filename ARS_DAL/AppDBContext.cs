@@ -21,11 +21,14 @@ namespace ARS_DAL
         public DbSet<SessionDetails> SessionDetails { get; set; }
         public DbSet<SessionParticipantsMapping> SessionParticipantsMapping { get; set; }
 
+        public DbSet<ParticipantIntrests> ParticipantIntrests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
             modelBuilder.Entity<Participant>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<SessionType>().HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<SessionParticipantsMapping>().HasIndex(x => new { x.ParticipantId,x.SessionDetailsId }).IsUnique();
+            modelBuilder.Entity<ParticipantIntrests>().HasIndex(x => new { x.ParticipantID, x.SessionTypeId }).IsUnique();
         }
     }
 }
