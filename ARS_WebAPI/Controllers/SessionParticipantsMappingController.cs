@@ -38,6 +38,18 @@ namespace ARS_WebAPI.Controllers
             return _ISessionParticipantsMappingDAL.get().ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL);
         }
 
+        [HttpGet("GetDetails")]
+        public IEnumerable<object> GetDetails() 
+        {
+            return
+            from item in _ISessionParticipantsMappingDAL.get().ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL) 
+            select new { id = item.Id, sessionName = item.SessionDetails.SessionName, 
+                date =item.SessionDetails.Date, trainerName = item.SessionDetails.Trainer.Name,
+                sessionType = item.SessionDetails.SessionType.Name,
+                participant = item.Participant.Name
+            };
+        }
+
         // GET api/<SessionParticipantsMappingController>/5
         [HttpGet("getByParticipantId/{id}")]
         public IEnumerable<SessionParticipantsMappingViewModel> getByParticipantId(int id)
@@ -69,7 +81,7 @@ namespace ARS_WebAPI.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public List<SessionParticipantsMappingViewModel> AddAttendenceFromFile(UploadedSession uploadedSession)
+        public List<SessionParticipantsMappingViewModel> AddAttendenceFromFile([FromForm]UploadedSession uploadedSession)
         {
             #region add new participants if not added else fetch particpants
             List<ParticipantViewModel> tempPVM = ReadFileData(uploadedSession.UploadedFile);
@@ -113,7 +125,10 @@ namespace ARS_WebAPI.Controllers
                     Date = uploadedSession.SessionDate,
                     SessionType = s1,
                     Trainer = p1,
-                    SessionName = s1.Name + " BY - " + p1.Name +" " + uploadedSession.SessionDate.Date.ToShortDateString()
+                    SessionName = s1.Name + " BY - " + p1.Name +" " + uploadedSession.SessionDate.Date.ToShortDateString(),
+                    Description = s1.Name + " BY - " + p1.Name + " " + uploadedSession.SessionDate.Date.ToUniversalTime(),
+                    UploadLink = string.Empty
+
                 }).ConvertToModel())).ConvertToViewModel(_ISessionTypeDAL, _IParticipantDAL);
             }
 
@@ -132,6 +147,8 @@ namespace ARS_WebAPI.Controllers
             return _ISessionParticipantsMappingDAL.AddMultipleAttendence(resultPost.ConvertToListModel()).ConvertToListViewModel(_ISessionTypeDAL, _IParticipantDAL, _ISessionDetailsDAL);
         }
 
+        [Route("[action]")]
+        [HttpPost]
         private List<ParticipantViewModel> ReadFileData(IFormFile UploadedFile)
         {
             var Participants = new List<ParticipantViewModel>();

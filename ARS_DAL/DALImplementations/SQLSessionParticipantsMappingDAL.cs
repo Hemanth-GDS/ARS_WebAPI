@@ -38,10 +38,17 @@ namespace ARS_DAL.DALImplementations
         {
             try
             {
-                context.SessionParticipantsMapping.Add(sessionParticipantsMapping);
-                if (fromAPI)
-                    context.SaveChanges();
-                return sessionParticipantsMapping;
+                var spm = context.SessionParticipantsMapping.Where(x => x.ParticipantId == sessionParticipantsMapping.ParticipantId && x.SessionDetailsId == sessionParticipantsMapping.SessionDetailsId).FirstOrDefault();
+                if (spm == null)
+                {
+
+                    context.SessionParticipantsMapping.Add(sessionParticipantsMapping);
+                    if (fromAPI)
+                        context.SaveChanges();
+                    return sessionParticipantsMapping;
+                }
+                else
+                    return spm;
             }
             catch (Exception)
             {
