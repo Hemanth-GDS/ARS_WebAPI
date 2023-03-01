@@ -28,9 +28,20 @@ namespace ARS_WebAPI.Controllers
         }
         // GET: api/<ParticipantIntrestsController>
         [HttpGet]
-        public List<ParticipantIntrestViewModel> Get()
-        {
+        public List<ParticipantIntrestViewModel> Get() {
             return _IParticipantIntrestDAL.get().convertToLISTViewModel(_serviceType, _servicePart);
+        }
+
+        [HttpGet("GetDetails")]
+        public IEnumerable<object> GetDetails()
+        {
+            var pis = _IParticipantIntrestDAL.get().convertToLISTViewModel(_serviceType, _servicePart).OrderBy(x=> x.Participant.ParticipantId);
+
+            foreach (var item in pis.Select(x=> x.Participant.ParticipantId).Distinct())
+            {
+                yield return new { ParticipantEmail = _servicePart.GetParticipant(item).Email, ParticipantIntrests = pis.Where(x => x.Participant.ParticipantId == item).Select(x => x.SessionType.Name) };
+            }
+
         }
 
         // GET api/<ParticipantIntrestsController>/5
@@ -55,17 +66,17 @@ namespace ARS_WebAPI.Controllers
         }
 
 
-
         // PUT api/<ParticipantIntrestsController>/5
         //[HttpPut("{id}")]
         //public void Put(int id, [FromBody] string value)
         //{
         //}
 
-        //// DELETE api/<ParticipantIntrestsController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        // DELETE api/<ParticipantIntrestsController>/5
+        [HttpDelete("{id}")]
+        public bool Delete(ParticipantIntrestViewModel value)
+        {
+            return _IParticipantIntrestDAL.Delete(value.convertToModel());
+        }
     }
 }

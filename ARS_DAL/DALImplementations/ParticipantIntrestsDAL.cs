@@ -66,6 +66,19 @@ namespace ARS_DAL.DALImplementations
             return context.ParticipantIntrests.Where(x => x.ParticipantID == participantId).ToList();
         }
 
-       
+        public bool Delete(ParticipantIntrests participantIntrests) 
+        {
+            try
+            {
+                context.ParticipantIntrests.Remove(participantIntrests);
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

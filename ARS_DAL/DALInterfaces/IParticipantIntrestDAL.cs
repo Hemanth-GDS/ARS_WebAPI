@@ -19,7 +19,7 @@ namespace ARS_DAL.DALInterfaces
 
         List<ParticipantIntrests> AddMultiple(List<ParticipantIntrests> lstParticipantIntrests);
 
-
+        bool Delete(ParticipantIntrests participantIntrests);
 
     }
 }
