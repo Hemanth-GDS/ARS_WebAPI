@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ARS_WebAPI.ModelMappers;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using OfficeOpenXml;
+using ARS_Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -78,5 +82,37 @@ namespace ARS_WebAPI.Controllers
         {
             return _IParticipantIntrestDAL.Delete(value.convertToModel());
         }
+
+        [HttpGet("GetParticipantIntrestfromFile")]
+        public List<ParticipantIntrestViewModel> ParticipantIntrestfromFile([FromForm] IFormFile UploadedFile)
+        {
+            return (_IParticipantIntrestDAL.AddMultiple(ReadFileData(UploadedFile))).convertToLISTViewModel(_serviceType, _servicePart);
+        }
+
+        private List<ParticipantIntrests> ReadFileData(IFormFile UploadedFile)
+        {
+            var ParticipantIntrest = new List<ParticipantIntrests>();
+            using (var stream = new MemoryStream())
+            {
+                UploadedFile.CopyTo(stream);
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial; 
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet sheet = package.Workbook.Worksheets[0];
+                    var currentSheet = package.Workbook.Worksheets;
+                    var workSheet = currentSheet.First(); int rowCount = workSheet.Dimension.Rows;
+                    for (int row = 1; row <= rowCount; row++)
+                    {
+                        ParticipantIntrest.Add(new ParticipantIntrests()
+                        {
+                            ParticipantID = _servicePart.GetParticipantByEmail( workSheet.Cells[row, 2].Value.ToString().Trim()).ParticipantId,
+                            SessionTypeId = _serviceType.GetByName(workSheet.Cells[row, 3].Value.ToString().Trim()).Id
+                        });
+                    }
+                }
+            }
+            return ParticipantIntrest;
+        }
+
     }
 }
