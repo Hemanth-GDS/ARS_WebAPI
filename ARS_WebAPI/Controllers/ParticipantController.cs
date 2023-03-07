@@ -3,6 +3,7 @@ using ARS_DAL.DALInterfaces;
 using ARS_Models;
 using ARS_WebAPI.ModelMappers;
 using ARS_WebAPI.ViewModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace ARS_WebAPI.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ParticipantController : ControllerBase

@@ -1,6 +1,7 @@
 ﻿using ARS_DAL.DALInterfaces;
 using ARS_WebAPI.ModelMappers;
 using ARS_WebAPI.ViewModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace ARS_WebAPI.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionParticipantsMappingController : ControllerBase
@@ -170,6 +172,7 @@ namespace ARS_WebAPI.Controllers
                     }
                 }
             }
+            Participants.RemoveAt(0);
             return Participants;
         }
 

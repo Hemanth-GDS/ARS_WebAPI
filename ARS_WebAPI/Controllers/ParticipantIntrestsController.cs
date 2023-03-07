@@ -10,11 +10,13 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using OfficeOpenXml;
 using ARS_Models;
+using Microsoft.AspNetCore.Cors;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ARS_WebAPI.Controllers
 {
+    [EnableCors("AllowOrigin")]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ParticipantIntrestsController : ControllerBase
@@ -34,6 +36,16 @@ namespace ARS_WebAPI.Controllers
         [HttpGet]
         public List<ParticipantIntrestViewModel> Get() {
             return _IParticipantIntrestDAL.get().convertToLISTViewModel(_serviceType, _servicePart);
+        }
+
+
+        [HttpGet]
+        public IEnumerable<object> GetParticipantInterest()
+        {
+            var pis = _IParticipantIntrestDAL.get().convertToLISTViewModel(_serviceType, _servicePart).OrderBy(x => x.Participant.ParticipantId); foreach (var item in pis.Select(x => x.Participant.ParticipantId).Distinct())
+            {
+                yield return new { Participant = _servicePart.GetParticipant(item).Name, ParticipantIntrests = pis.Where(x => x.Participant.ParticipantId == item).Select(x => x.SessionType.Name) };
+            }
         }
 
         [HttpGet("GetDetails")]
@@ -63,10 +75,24 @@ namespace ARS_WebAPI.Controllers
             return _IParticipantIntrestDAL.Add(value.convertToModel()).convertToViewModel(_serviceType, _servicePart);
         }
 
+        //[HttpPost]
+        //public List<ParticipantIntrestViewModel> AddMultiple([FromBody] List<ParticipantIntrestViewModel> value)
+        //{
+        //    return (_IParticipantIntrestDAL.AddMultiple(value.convertToListModel())).convertToLISTViewModel(_serviceType, _servicePart);
+        //}
+
         [HttpPost]
-        public List<ParticipantIntrestViewModel> AddMultiple([FromBody] List<ParticipantIntrestViewModel> value)
+        public List<ParticipantIntrestViewModel> AddMultiple(int participantId, List<int> sessionTypeIds)
         {
-            return (_IParticipantIntrestDAL.AddMultiple(value.convertToListModel())).convertToLISTViewModel(_serviceType, _servicePart);
+            var ParticipantIntrest = new List<ParticipantIntrests>(); foreach (var item in sessionTypeIds)
+            {
+                ParticipantIntrest.Add(new ParticipantIntrests()
+                {
+                    ParticipantID = participantId,
+                    SessionTypeId = item
+                });
+            }
+            return (_IParticipantIntrestDAL.AddMultiple(ParticipantIntrest)).convertToLISTViewModel(_serviceType, _servicePart);
         }
 
 

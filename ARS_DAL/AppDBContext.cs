@@ -1,7 +1,9 @@
 ﻿using ARS_Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,19 @@ namespace ARS_DAL
             modelBuilder.Entity<SessionParticipantsMapping>().HasIndex(x => new { x.ParticipantId,x.SessionDetailsId }).IsUnique();
             modelBuilder.Entity<ParticipantIntrests>().HasIndex(x => new { x.ParticipantID, x.SessionTypeId }).IsUnique();
         }
+
+        
     }
+
+
+    //public partial class ReadData : Migration
+    //{
+    //    //protected override void Up(MigrationBuilder migrationBuilder)
+    //    //{
+    //    //    //C:\ARS\ARS_WebAPI\ARS_WebAPI\ARS_DAL\Scripts\Scripts_1.sql
+    //    //    var sqlFile = Path.Combine("Scripts/Scripts_1.sql");
+    //    //    migrationBuilder.Sql(File.ReadAllText(sqlFile));
+    //    //}
+    //}
 }
  

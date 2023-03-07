@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ARS_DAL.Migrations
@@ -87,21 +88,25 @@ namespace ARS_DAL.Migrations
                 column: "Name",
                 unique: true,
                 filter: "[Name] IS NOT NULL");
+
+            //var sqlFile = Path.Combine("Scripts/Scripts_1.sql");
+            //migrationBuilder.Sql(File.ReadAllText(sqlFile));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Participant");
-
-            migrationBuilder.DropTable(
-                name: "SessionDetails");
 
             migrationBuilder.DropTable(
                 name: "SessionParticipantsMapping");
 
             migrationBuilder.DropTable(
+                name: "SessionDetails");
+
+            migrationBuilder.DropTable(
                 name: "SessionType");
+
+            migrationBuilder.DropTable(
+                name: "Participant");
         }
     }
 }

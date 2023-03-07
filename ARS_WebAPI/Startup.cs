@@ -37,6 +37,21 @@ namespace ARS_WebAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ARS_WebAPI", Version = "v1" });
             });
             services.AddModelMappings();
+
+            services.AddCors(
+            options =>
+            {
+                options.AddPolicy(
+                name: "AllowOrigin",
+                builder =>
+                {
+                  builder.AllowAnyOrigin()
+                 .AllowAnyMethod()
+                 .AllowAnyHeader();
+                });
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +67,9 @@ namespace ARS_WebAPI
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("AllowOrigin");
+
 
             app.UseEndpoints(endpoints =>
             {
